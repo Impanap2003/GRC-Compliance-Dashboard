@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRC Compliance Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f8;
+    color: black;
+}
+
+/* HEADER */
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+/* CONTAINER */
+.container {
+    width: 90%;
+    margin: auto;
+}
+
+/* CARDS */
+.cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin: 10px;
+    width: 180px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card p {
+    font-size: 22px;
+}
+
+/* COLORS */
+.red { color: #e74c3c; }
+.green { color: #2ecc71; }
+
+/* CHART LAYOUT */
+.chart-wrapper {
+    text-align: center;
+}
+
+.chart-container {
+    width: 45%;
+    display: inline-block;
+    margin: 20px;
+}
+
+/* SMALL CHART */
+canvas {
+    max-height: 280px;
+}
+
+/* BUTTON */
+button {
+    margin: 15px;
+    padding: 10px 15px;
+    border: none;
+    background: #3498db;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* DARK MODE */
+.dark-mode {
+    background: #121212;
+    color: white;
+}
+
+.dark-mode header {
+    background: #1f2d3a;
+}
+
+.dark-mode .card {
+    background: #1e1e1e;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>GRC Compliance Dashboard</h1>
+</header>
+
+<div class="container">
+
+<div class="cards">
+    <div class="card"><h3>Total Risks</h3><p id="total"></p></div>
+    <div class="card"><h3>Open Risks</h3><p id="open" class="red"></p></div>
+    <div class="card"><h3>Closed Risks</h3><p id="closed" class="green"></p></div>
+    <div class="card"><h3>High Risks</h3><p id="high" class="red"></p></div>
+    <div class="card"><h3>Compliance %</h3><p id="compliance" class="green"></p></div>
+</div>
+
+<div style="text-align:center;">
+    <button onclick="toggleTheme()">Toggle Dark Mode</button>
+</div>
+
+<div class="chart-wrapper">
+
+    <div class="chart-container">
+        <h3>Open vs Closed Risks</h3>
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h3>Risk Priority Overview</h3>
+        <canvas id="barChart"></canvas>
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+// FETCH DATA (REAL-TIME)
+fetch('data.json')
+.then(res => res.json())
+.then(data => {
+
+    // UPDATE CARDS
+    document.getElementById("total").innerText = data.total;
+    document.getElementById("open").innerText = data.open;
+    document.getElementById("closed").innerText = data.closed;
+    document.getElementById("high").innerText = data.high;
+    document.getElementById("compliance").innerText = data.compliance + "%";
+
+    // PIE CHART
+    new Chart(document.getElementById('pieChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Open', 'Closed'],
+            datasets: [{
+                data: [data.open, data.closed],
+                backgroundColor: ['#e74c3c', '#2ecc71']
+            }]
+        }
+    });
+
+    // BAR CHART
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: ['High', 'Medium', 'Low'],
+            datasets: [{
+                label: 'Risks',
+                data: [data.high, data.medium, data.low],
+                backgroundColor: ['#e74c3c', '#f39c12', '#2ecc71']
+            }]
+        }
+    });
+
+});
+
+// DARK MODE
+function toggleTheme() {
+    document.body.classList.toggle("dark-mode");
+}
+
+</script>
+
+</body>
+</html>
