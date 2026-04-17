@@ -161,17 +161,41 @@ fetch('data.json')
     });
 
     // BAR CHART
-    new Chart(document.getElementById('barChart'), {
-        type: 'bar',
-        data: {
-            labels: ['High', 'Medium', 'Low'],
-            datasets: [{
-                label: 'Risks',
-                data: [data.high, data.medium, data.low],
-                backgroundColor: ['#e74c3c', '#f39c12', '#2ecc71']
-            }]
+    barChart = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+        labels: ['High', 'Medium', 'Low'],
+        datasets: [
+            {
+                label: 'High',
+                data: [data.high, 0, 0],
+                backgroundColor: '#e74c3c'
+            },
+            {
+                label: 'Medium',
+                data: [0, data.medium, 0],
+                backgroundColor: '#f39c12'
+            },
+            {
+                label: 'Low',
+                data: [0, 0, data.low],
+                backgroundColor: '#27ae60'
+            }
+        ]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: true   // ✅ shows legend like pie chart
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
         }
-    });
+    }
+});
 
 });
 
